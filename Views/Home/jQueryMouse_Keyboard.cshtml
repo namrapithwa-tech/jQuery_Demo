@@ -19,13 +19,16 @@
         <div class="card mb-4">
             <div class="card-header">Mouse Events</div>
             <div class="card-body">
-                <button id="mouseEventBtn" class="btn btn-primary">Hover and Click Me</button>
+                <button id="mouseEventBtn" class="btn btn-primary">Hover, Click, or Double Click Me</button>
                 <p id="mouseEventDisplay" class="mt-3">Interact with the button to see events.</p>
 
                 <div id="mouseArea" class="border border-secondary mt-3 p-3" style="height: 200px;">
                     Move your mouse in this area to see position updates.
                     <p id="mousePosition" class="mt-2"></p>
                 </div>
+
+                <button id="rightClickBtn" class="btn btn-warning mt-3">Right-Click Me</button>
+                <p id="rightClickMessage" class="mt-3 text-muted"></p>
             </div>
         </div>
 
@@ -35,6 +38,9 @@
             <div class="card-body">
                 <input type="text" id="keyInput" class="form-control mb-3" placeholder="Type something..." />
                 <p id="keyEventDisplay" class="text-muted">Start typing to see events.</p>
+
+                <textarea id="textareaInput" class="form-control mt-3" placeholder="Type here to track events in a text area..." rows="3"></textarea>
+                <p id="textareaEventDisplay" class="text-muted mt-3">Interact with the text area to see events.</p>
             </div>
         </div>
     </div>
@@ -72,6 +78,11 @@
                 $("#mousePosition").text("Mouse button is released inside the area.");
             });
 
+            $("#rightClickBtn").contextmenu(function (event) {
+                event.preventDefault(); // Prevent default context menu
+                $("#rightClickMessage").text("Right-click detected!");
+            });
+
             // Keyboard Events
             $("#keyInput").keydown(function (event) {
                 $("#keyEventDisplay").text("Key Down: " + event.key);
@@ -83,6 +94,18 @@
 
             $("#keyInput").keypress(function (event) {
                 $("#keyEventDisplay").text("Key Pressed: " + event.key);
+            });
+
+            $("#textareaInput").on("input", function () {
+                $("#textareaEventDisplay").text("Content changed: " + $(this).val());
+            });
+
+            $("#textareaInput").focus(function () {
+                $("#textareaEventDisplay").text("Textarea focused.");
+            });
+
+            $("#textareaInput").blur(function () {
+                $("#textareaEventDisplay").text("Textarea lost focus.");
             });
         });
     </script>
