@@ -1,0 +1,150 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html> 
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery CRUD and Form Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">jQuery Static CRUD Without AJAX</h1>
+
+        <!-- CRUD Section -->
+        <div class="card mb-4">
+            <div class="card-header">Static CRUD Operations</div>
+            <div class="card-body">
+                <form id="crudForm" class="mb-3">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" id="nameInput" class="form-control" placeholder="Enter Name" />
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" id="ageInput" class="form-control" placeholder="Enter Age" />
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" id="addBtn" class="btn btn-success">Add Record</button>
+                        </div>
+                    </div>
+                </form>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crudTableBody">
+                        <!-- Records will appear here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Form Events Section -->
+        <h2 class="text-center mb-4">Form Events Demonstration</h2>
+        <div class="card mb-4">
+            <div class="card-header">Form Events</div>
+            <div class="card-body">
+                <form id="formEventsForm">
+                    <div class="mb-3">
+                        <label for="focusBlurInput" class="form-label">Focus and Blur Example</label>
+                        <input type="text" id="focusBlurInput" class="form-control" placeholder="Focus or blur this input" />
+                        <p id="focusBlurMessage" class="text-muted mt-2"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dynamicSelect" class="form-label">Dynamic Select Example</label>
+                        <select id="dynamicSelect" class="form-select">
+                            <option value="">Select an option</option>
+                        </select>
+                        <button type="button" id="addOptionBtn" class="btn btn-info mt-2">Add Option</button>
+                        <p id="dynamicSelectMessage" class="text-muted mt-2"></p>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-primary">Submit Form</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            let recordCount = 0;
+
+            // CRUD Operations
+            $('#crudForm').submit(function (event) {
+                event.preventDefault();
+                const name = $('#nameInput').val();
+                const age = $('#ageInput').val();
+
+                if (name && age) {
+                    recordCount++;
+                    const recordRow = `
+                                <tr id="record-${recordCount}">
+                                    <td>${recordCount}</td>
+                                    <td>${name}</td>
+                                    <td>${age}</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm editBtn">Edit</button>
+                                        <button class="btn btn-danger btn-sm deleteBtn">Delete</button>
+                                    </td>
+                                </tr>`;
+                    $('#crudTableBody').append(recordRow);
+
+                    $('#nameInput').val('');
+                    $('#ageInput').val('');
+                } else {
+                    alert('Please fill in both fields.');
+                }
+            });
+
+            $(document).on('click', '.deleteBtn', function () {
+                $(this).closest('tr').remove();
+            });
+
+            $(document).on('click', '.editBtn', function () {
+                const row = $(this).closest('tr');
+                const name = row.find('td:eq(1)').text();
+                const age = row.find('td:eq(2)').text();
+
+                $('#nameInput').val(name);
+                $('#ageInput').val(age);
+                row.remove();
+            });
+
+            // Form Events
+            $('#focusBlurInput').focus(function () {
+                $('#focusBlurMessage').text('Input is focused.');
+            }).blur(function () {
+                $('#focusBlurMessage').text('Input lost focus.');
+            });
+
+            $('#addOptionBtn').click(function () {
+                const newOption = `Option ${$('#dynamicSelect option').length}`;
+                $('#dynamicSelect').append(`<option value="${newOption}">${newOption}</option>`);
+            });
+
+            $('#dynamicSelect').change(function () {
+                const selectedOption = $(this).val();
+                $('#dynamicSelectMessage').text('You selected: ' + selectedOption);
+            });
+
+            $('#formEventsForm').submit(function (event) {
+                event.preventDefault();
+                const selectedOption = $('#dynamicSelect').val();
+                const message = `Form submitted successfully! Selected option: ${selectedOption || "None"}`;
+
+                alert(message);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -13,7 +13,7 @@ namespace jQuery_Demo.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult jQuerySelectors()
         {
             return View();
         }
@@ -22,8 +22,7 @@ namespace jQuery_Demo.Controllers
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        public IActionResult jQueryFormEvents_CRUD()
         {
             return View();
         }
