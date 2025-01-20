@@ -18,6 +18,11 @@ namespace jQuery_Demo.Controllers
             return View();
         }
 
+        public IActionResult jQueryMouse_Keyboard()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
