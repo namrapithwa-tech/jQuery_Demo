@@ -1,0 +1,176 @@
+﻿@model jQuery_Demo.Models.UserRegistration
+@{
+    ViewData["Title"] = "User Management";
+}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <div class="container">
+        <h1 class="mt-5">User Management with Ajax CRUD</h1>
+        <div class="mb-3">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add User</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- User rows will be appended here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label for="addUserName">Name</label>
+                            <input type="text" class="form-control" id="addUserName" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="addUserAge">Age</label>
+                            <input type="number" class="form-control" id="addUserAge" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update User Modal -->
+    <div class="modal fade" id="updateUserModal" tabindex="-1" role="dialog" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateUserModalLabel">Update User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateUserForm">
+                        <input type="hidden" id="updateUserId" />
+                        <div class="form-group">
+                            <label for="updateUserName">Name</label>
+                            <input type="text" class="form-control" id="updateUserName" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="updateUserAge">Age</label>
+                            <input type="number" class="form-control" id="updateUserAge" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const apiUrl = 'https://localhost:7043/api/User';
+
+        // Fetch and display users
+        function loadUsers() {
+            $.ajax({
+                url: apiUrl,
+                method: 'GET',
+                success: function (users) {
+                    $('#userTableBody').empty();
+                    users.forEach(user => {
+                        console.log('${user.id} ${ user.name } ${ user.age } ');
+                        $('#userTableBody').append(`
+                                    <tr>
+                                        <td>${user.id}</td>
+                                        <td>${user.name}</td>
+                                        <td>${user.age}</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="showUpdateUserModal(${user.id}, '${user.name}', ${user.age})">Edit</button>
+                                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Delete</button>
+                                        </td>
+                                    </tr>
+                                `);
+                    });
+                }
+            });
+        }
+
+        // Add user
+        $('#addUserForm').submit(function (event) {
+            event.preventDefault();
+
+            const user = {
+                name: $('#addUserName').val(),
+                age: $('#addUserAge').val()
+            };
+
+            $.ajax({
+                url: apiUrl,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(user),
+                success: function () {
+                    $('#addUserModal').modal('hide');
+                    loadUsers();
+
+                }
+            });
+        });
+
+        // Show update user modal
+        function showUpdateUserModal(id, name, age) {
+            $('#updateUserId').val(id);
+            $('#updateUserName').val(name);
+            $('#updateUserAge').val(age);
+            $('#updateUserModal').modal('show');
+        }
+
+        // Update user
+        $('#updateUserForm').submit(function (event) {
+            event.preventDefault();
+
+            const user = {
+                id: $('#updateUserId').val(),
+                name: $('#updateUserName').val(),
+                age: $('#updateUserAge').val()
+            };
+
+            $.ajax({
+                url: `${apiUrl}/${user.id}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(user),
+                success: function () {
+                    $('#updateUserModal').modal('hide');
+                    loadUsers();
+                }
+            });
+        });
+
+        // Delete user
+        function deleteUser(id) {
+            $.ajax({
+                url: `${apiUrl}/${id}`,
+                method: 'DELETE',
+                success: function () {
+                    loadUsers();
+                }
+            });
+        }
+
+        // Initial load
+        loadUsers();
+    </script>
