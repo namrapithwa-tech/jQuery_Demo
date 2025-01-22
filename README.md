@@ -76,6 +76,7 @@ This section integrates jQuery with a Web API to perform CRUD operations dynamic
 - Visual Studio or any .NET IDE
 - Basic knowledge of jQuery and .NET MVC
 - API URL: [AJAX CRUD API](https://github.com/namrapithwa-tech/AJAX_CRUD_Create_WEBAPI)
+### Create .NET Core MVC Project
 
 ### Some Extension need to be install from Tools -> NuGet Package Manager -> Manage NuGet Packages for Solution..
 ```bash
